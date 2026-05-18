@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Countries - Politics Manager</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-2">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">
+            <i class="fas fa-landmark me-2"></i>Politics Manager
+        </a>
+        <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="/parties"><i class="fas fa-building me-1"></i>Parties</a></li>
+                <li class="nav-item"><a class="nav-link" href="/members"><i class="fas fa-users me-1"></i>Members</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/countries"><i class="fas fa-globe me-1"></i>Countries</a></li>
+                <li class="nav-item"><a class="nav-link" href="/regions"><i class="fas fa-map-marked-alt me-1"></i>Regions</a></li>
+                <li class="nav-item"><a class="nav-link" href="/nomination-costs"><i class="fas fa-coins me-1"></i>Costs</a></li>
+                <li class="nav-item">
+                    <form method="post" action="/logout" class="d-inline">
+                        <button type="submit" class="nav-link btn btn-link text-white" style="text-decoration:none">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold mb-0"><i class="fas fa-globe me-2 text-primary"></i>Countries</h4>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md-5">
+            <div class="card shadow-2">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-plus me-2"></i>Add Country</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" action="/countries">
+                        <div class="mb-3">
+                            <div data-mdb-input-init class="form-outline">
+                                <input type="text" name="name" id="name" class="form-control" required>
+                                <label class="form-label" for="name">Country Name</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div data-mdb-input-init class="form-outline">
+                                <input type="text" name="code" id="code" class="form-control" maxlength="2" required
+                                       style="text-transform:uppercase">
+                                <label class="form-label" for="code">Code (2 letters)</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-save me-1"></i>Add Country
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="card shadow-2">
+                <div class="card-body p-0">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Name</th>
+                                <th>Code</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="c : ${countries}">
+                                <td class="fw-bold" th:text="${c.name}">Country</td>
+                                <td><span class="badge bg-secondary" th:text="${c.code}">US</span></td>
+                                <td class="text-center">
+                                    <form th:action="@{/countries/{id}/delete(id=${c.id})}" method="post"
+                                          style="display:inline"
+                                          onsubmit="return confirm('Delete ' + '${c.name}' + '?')">
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(countries)}">
+                                <td colspan="3" class="text-center text-muted py-4">
+                                    <i class="fas fa-inbox fa-2x d-block mb-2"></i>No countries yet
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.js"></script>
+</body>
+</html>

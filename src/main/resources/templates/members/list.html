@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Members - Politics Manager</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-2">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">
+            <i class="fas fa-landmark me-2"></i>Politics Manager
+        </a>
+        <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="/parties"><i class="fas fa-building me-1"></i>Parties</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/members"><i class="fas fa-users me-1"></i>Members</a></li>
+                <li class="nav-item"><a class="nav-link" href="/countries"><i class="fas fa-globe me-1"></i>Countries</a></li>
+                <li class="nav-item"><a class="nav-link" href="/regions"><i class="fas fa-map-marked-alt me-1"></i>Regions</a></li>
+                <li class="nav-item"><a class="nav-link" href="/nomination-costs"><i class="fas fa-coins me-1"></i>Costs</a></li>
+                <li class="nav-item">
+                    <form method="post" action="/logout" class="d-inline">
+                        <button type="submit" class="nav-link btn btn-link text-white" style="text-decoration:none">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold mb-0"><i class="fas fa-users me-2 text-primary"></i>Party Members</h4>
+        <a href="/members/new" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i>Add Member
+        </a>
+    </div>
+
+    <div class="card shadow-2">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Party</th>
+                            <th class="text-center">Active</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="member : ${members}">
+                            <td class="fw-bold" th:text="${member.firstName} + ' ' + ${member.lastName}">Full Name</td>
+                            <td th:text="${member.email}">email@example.com</td>
+                            <td><span class="badge bg-primary rounded-pill" th:text="${member.role}">Role</span></td>
+                            <td th:text="${member.party?.name ?: '—'}">Party</td>
+                            <td class="text-center">
+                                <span th:if="${member.active}" class="badge bg-success rounded-pill">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                                <span th:unless="${member.active}" class="badge bg-danger rounded-pill">
+                                    <i class="fas fa-times"></i>
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <a th:href="@{/members/{id}/edit(id=${member.id})}" class="btn btn-sm btn-warning me-1">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form th:action="@{/members/{id}/delete(id=${member.id})}" method="post" style="display:inline"
+                                      onsubmit="return confirm('Delete this member?')">
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(members)}">
+                            <td colspan="6" class="text-center text-muted py-4">
+                                <i class="fas fa-inbox fa-2x d-block mb-2"></i>No members found
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.js"></script>
+</body>
+</html>

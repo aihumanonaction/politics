@@ -1,0 +1,20 @@
+package com.politics.entity;
+
+public enum RegionType {
+    STATE,
+    UNION_TERRITORY,
+    COUNTY,
+    LOK_SABHA,
+    VIDHAN_SABHA,
+    RAJYA_SABHA,
+    DISTRICT,
+    MUNICIPAL_CORPORATION,
+    MUNICIPALITY,
+    TOWN_PANCHAYAT,
+    DISTRICT_PANCHAYAT,
+    PANCHAYAT_UNION,
+    VILLAGE_PANCHAYAT,
+    WARD,
+    RIKSDAG,
+    POLLING_BOOTH
+}

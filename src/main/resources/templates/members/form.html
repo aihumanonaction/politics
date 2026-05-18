@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:if="${member.id == null}">New Member - Politics Manager</title>
+    <title th:unless="${member.id == null}">Edit Member - Politics Manager</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-2">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">
+            <i class="fas fa-landmark me-2"></i>Politics Manager
+        </a>
+        <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="/parties"><i class="fas fa-building me-1"></i>Parties</a></li>
+                <li class="nav-item"><a class="nav-link" href="/members"><i class="fas fa-users me-1"></i>Members</a></li>
+                <li class="nav-item"><a class="nav-link" href="/countries"><i class="fas fa-globe me-1"></i>Countries</a></li>
+                <li class="nav-item"><a class="nav-link" href="/regions"><i class="fas fa-map-marked-alt me-1"></i>Regions</a></li>
+                <li class="nav-item"><a class="nav-link" href="/nomination-costs"><i class="fas fa-coins me-1"></i>Costs</a></li>
+                <li class="nav-item">
+                    <form method="post" action="/logout" class="d-inline">
+                        <button type="submit" class="nav-link btn btn-link text-white" style="text-decoration:none">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-2">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0" th:if="${member.id == null}">
+                        <i class="fas fa-user-plus me-2"></i>New Party Member
+                    </h5>
+                    <h5 class="mb-0" th:unless="${member.id == null}">
+                        <i class="fas fa-user-edit me-2"></i>Edit Member
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form th:action="${member.id == null} ? '/members' : @{/members/{id}/edit(id=${member.id})}"
+                          method="post">
+
+                        <input type="hidden" name="partyId" th:value="${member.party?.id}">
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div data-mdb-input-init class="form-outline">
+                                    <input type="text" name="firstName" id="firstName" class="form-control"
+                                           th:value="${member.firstName}" required>
+                                    <label class="form-label" for="firstName">First Name</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div data-mdb-input-init class="form-outline">
+                                    <input type="text" name="lastName" id="lastName" class="form-control"
+                                           th:value="${member.lastName}" required>
+                                    <label class="form-label" for="lastName">Last Name</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div data-mdb-input-init class="form-outline">
+                                    <input type="email" name="email" id="email" class="form-control"
+                                           th:value="${member.email}" required>
+                                    <label class="form-label" for="email">Email</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div data-mdb-input-init class="form-outline">
+                                    <input type="password" name="password" id="password" class="form-control"
+                                           th:placeholder="${member.id != null} ? 'Leave blank to keep current' : ''"
+                                           th:required="${member.id == null}">
+                                    <label class="form-label" for="password">
+                                        Password <span th:if="${member.id != null}" class="text-muted small">(leave blank to keep)</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div data-mdb-input-init class="form-outline">
+                                    <input type="tel" name="phone" id="phone" class="form-control"
+                                           th:value="${member.phone}">
+                                    <label class="form-label" for="phone">Phone</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div data-mdb-input-init class="form-outline">
+                                    <input type="text" name="role" id="role" class="form-control"
+                                           th:value="${member.role}" list="roleList">
+                                    <label class="form-label" for="role">Role</label>
+                                    <datalist id="roleList">
+                                        <option value="President">
+                                        <option value="Vice President">
+                                        <option value="Secretary">
+                                        <option value="Treasurer">
+                                        <option value="Member">
+                                        <option value="Volunteer">
+                                    </datalist>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <select name="partySelect" id="partySelect" class="form-select"
+                                        onchange="document.getElementById('partyId').value=this.value">
+                                    <option value="">— No Party —</option>
+                                    <option th:each="p : ${parties}" th:value="${p.id}"
+                                            th:text="${p.name}"
+                                            th:selected="${member.party?.id == p.id}"></option>
+                                </select>
+                                <label class="form-label ms-1 small text-muted" for="partySelect">Affiliated Party</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div data-mdb-input-init class="form-outline">
+                                    <input type="date" name="dateOfBirth" id="dateOfBirth" class="form-control"
+                                           th:value="${member.dateOfBirth}">
+                                    <label class="form-label" for="dateOfBirth">Date of Birth</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div data-mdb-input-init class="form-outline">
+                                    <input type="date" name="joinDate" id="joinDate" class="form-control"
+                                           th:value="${member.joinDate}">
+                                    <label class="form-label" for="joinDate">Join Date</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="form-check form-switch">
+                                <input type="checkbox" name="active" id="active" class="form-check-input" value="true"
+                                       th:checked="${member.active != null ? member.active : true}">
+                                <input type="hidden" name="_active" value="false">
+                                <label class="form-check-label" for="active">Active Member</label>
+                            </div>
+                        </div>
+
+                            <div class="d-flex justify-content-between">
+                            <a href="/members" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>
+                                <span th:if="${member.id == null}">Create Member</span>
+                                <span th:unless="${member.id == null}">Update Member</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.js"></script>
+</body>
+</html>

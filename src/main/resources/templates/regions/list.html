@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Regions - Politics Manager</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-2">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">
+            <i class="fas fa-landmark me-2"></i>Politics Manager
+        </a>
+        <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="/parties"><i class="fas fa-building me-1"></i>Parties</a></li>
+                <li class="nav-item"><a class="nav-link" href="/members"><i class="fas fa-users me-1"></i>Members</a></li>
+                <li class="nav-item"><a class="nav-link" href="/countries"><i class="fas fa-globe me-1"></i>Countries</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/regions"><i class="fas fa-map-marked-alt me-1"></i>Regions</a></li>
+                <li class="nav-item"><a class="nav-link" href="/nomination-costs"><i class="fas fa-coins me-1"></i>Costs</a></li>
+                <li class="nav-item">
+                    <form method="post" action="/logout" class="d-inline">
+                        <button type="submit" class="nav-link btn btn-link text-white" style="text-decoration:none">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container my-4">
+    <h4 class="fw-bold mb-3"><i class="fas fa-map-marked-alt me-2 text-primary"></i>Political Regions</h4>
+
+    <div class="row g-3">
+        <div class="col-md-5">
+            <div class="card shadow-2">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-plus me-2"></i>Add Region</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" action="/regions">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Country</label>
+                            <select name="countryId" id="countryId" class="form-select" required>
+                                <option value="">— Select Country —</option>
+                                <option th:each="c : ${allCountries}" th:value="${c.id}" th:text="${c.name}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Name</label>
+                            <div data-mdb-input-init class="form-outline">
+                                <input type="text" name="name" id="name" class="form-control" required>
+                                <label class="form-label" for="name">Region Name</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Type</label>
+                            <select name="type" id="type" class="form-select" required>
+                                <option value="STATE">State</option>
+                                <option value="UNION_TERRITORY">Union Territory</option>
+                                <option value="COUNTY">County</option>
+                                <option value="LOK_SABHA">Lok Sabha Constituency</option>
+                                <option value="VIDHAN_SABHA">Vidhan Sabha Constituency</option>
+                                <option value="RAJYA_SABHA">Rajya Sabha Seat</option>
+                                <option value="DISTRICT">District</option>
+                                <option value="MUNICIPAL_CORPORATION">Municipal Corporation</option>
+                                <option value="MUNICIPALITY">Municipality</option>
+                                <option value="TOWN_PANCHAYAT">Town Panchayat</option>
+                                <option value="DISTRICT_PANCHAYAT">District Panchayat</option>
+                                <option value="PANCHAYAT_UNION">Panchayat Union</option>
+                                <option value="VILLAGE_PANCHAYAT">Village Panchayat</option>
+                                <option value="WARD">Ward</option>
+                                <option value="RIKSDAG">Riksdag Constituency</option>
+                                <option value="POLLING_BOOTH">Polling Booth</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Parent Region <span class="text-muted small">(optional)</span></label>
+                            <select name="parentId" id="parentRegion" class="form-select">
+                                <option value="">— None (Top Level) —</option>
+                                <option th:each="r : ${allRegions}" th:value="${r.id}"
+                                        th:text="${r.name} + ' (' + ${r.type} + ')'"></option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-save me-1"></i>Add Region
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div th:each="c : ${countries}" class="card shadow-2 mb-3">
+                <div class="card-header bg-secondary text-white py-2">
+                    <h6 class="mb-0"><i class="fas fa-globe me-1"></i><span th:text="${c.name}">Country</span></h6>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-sm table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Region</th>
+                                <th>Type</th>
+                                <th>Parent</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <th:block th:each="r : ${allRegions}">
+                                <tr th:if="${r.country.id == c.id}">
+                                    <td class="fw-bold" th:text="${r.name}">Region Name</td>
+                                    <td><span class="badge bg-info rounded-pill" th:text="${r.type}">TYPE</span></td>
+                                    <td th:text="${r.parent?.name ?: '—'}" class="text-muted">Parent</td>
+                                    <td class="text-center">
+                                        <form th:action="@{/regions/{id}/delete(id=${r.id})}" method="post"
+                                              style="display:inline"
+                                              onsubmit="return confirm('Delete ${r.name}? Children will be orphaned.')">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </th:block>
+                            <tr th:if="${#lists.isEmpty(allRegions)}">
+                                <td colspan="4" class="text-center text-muted py-3">
+                                    <i class="fas fa-inbox fa-2x d-block mb-2"></i>No regions yet
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.js"></script>
+</body>
+</html>

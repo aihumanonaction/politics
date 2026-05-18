@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- DDL - Schema creation (JPA ddl-auto=none, Liquibase handles DDL) -->
+    <include file="ddl/create-schema.sql" relativeToChangelogFile="true"/>
+
+    <!-- DML - Seed data in dependency order -->
+    <include file="dml/seed-countries.sql" relativeToChangelogFile="true"/>
+    <include file="dml/seed-india.sql" relativeToChangelogFile="true"/>
+    <include file="dml/seed-sweden.sql" relativeToChangelogFile="true"/>
+    <include file="dml/seed-state-ls-vs.sql" relativeToChangelogFile="true"/>
+    <include file="dml/seed-state-ls-vs-2.sql" relativeToChangelogFile="true"/>
+    <include file="dml/seed-state-ls-vs-3.sql" relativeToChangelogFile="true"/>
+    <include file="dml/seed-ut-ls-vs.sql" relativeToChangelogFile="true"/>
+    <include file="dml/seed-sweden-constituencies.sql" relativeToChangelogFile="true"/>
+    <include file="dml/seed-tamil-nadu.sql" relativeToChangelogFile="true"/>
+    <include file="dml/seed-districts-corporations.sql" relativeToChangelogFile="true"/>
+    <include file="dml/seed-municipalities.sql" relativeToChangelogFile="true"/>
+    <include file="dml/seed-tn-corporation-wards.sql" relativeToChangelogFile="true"/>
+    <include file="dml/seed-tn-municipalities.sql" relativeToChangelogFile="true"/>
+    <include file="dml/seed-nomination-costs.sql" relativeToChangelogFile="true"/>
+
+</databaseChangeLog>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nomination Costs - Politics Manager</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-2">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">
+            <i class="fas fa-landmark me-2"></i>Politics Manager
+        </a>
+        <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="/parties"><i class="fas fa-building me-1"></i>Parties</a></li>
+                <li class="nav-item"><a class="nav-link" href="/members"><i class="fas fa-users me-1"></i>Members</a></li>
+                <li class="nav-item"><a class="nav-link" href="/countries"><i class="fas fa-globe me-1"></i>Countries</a></li>
+                <li class="nav-item"><a class="nav-link" href="/regions"><i class="fas fa-map-marked-alt me-1"></i>Regions</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/nomination-costs"><i class="fas fa-coins me-1"></i>Costs</a></li>
+                <li class="nav-item">
+                    <form method="post" action="/logout" class="d-inline">
+                        <button type="submit" class="nav-link btn btn-link text-white" style="text-decoration:none">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container my-4">
+    <h4 class="fw-bold mb-3"><i class="fas fa-coins me-2 text-primary"></i>Candidate Nomination Costs</h4>
+
+    <div class="row g-3">
+        <div class="col-md-5">
+            <div class="card shadow-2">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-plus me-2"></i>Set Nomination Cost</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" action="/nomination-costs">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Country</label>
+                            <select name="countryId" class="form-select" required>
+                                <option value="">— Select Country —</option>
+                                <option th:each="c : ${countries}" th:value="${c.id}" th:text="${c.name}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Region Type</label>
+                            <select name="regionType" class="form-select" required>
+                                <option value="">— Select Type —</option>
+                                <option th:each="rt : ${regionTypes}" th:value="${rt}" th:text="${rt}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Amount</label>
+                            <div data-mdb-input-init class="form-outline">
+                                <input type="number" name="amount" id="amount" class="form-control" step="0.01" min="0" required>
+                                <label class="form-label" for="amount">Amount</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Currency</label>
+                            <select name="currency" class="form-select">
+                                <option value="INR" selected>INR</option>
+                                <option value="SEK">SEK</option>
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-save me-1"></i>Save Cost
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="card shadow-2">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-list me-1"></i>Existing Costs</h5>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Country</th>
+                                <th>Region Type</th>
+                                <th>Amount</th>
+                                <th>Currency</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="c : ${costs}">
+                                <td th:text="${c.country.name}">India</td>
+                                <td class="fw-bold" th:text="${c.regionType}">LOK_SABHA</td>
+                                <td th:text="${#numbers.formatDecimal(c.amount, 0, 'COMMA', 2, 'POINT')}">25,000.00</td>
+                                <td th:text="${c.currency}">INR</td>
+                                <td class="text-center">
+                                    <form th:action="@{/nomination-costs/delete}" method="post"
+                                          style="display:inline"
+                                          onsubmit="return confirm('Delete cost for ${c.regionType}?')">
+                                        <input type="hidden" name="costId" th:value="${c.id}">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(costs)}">
+                                <td colspan="5" class="text-center text-muted py-3">
+                                    <i class="fas fa-inbox fa-2x d-block mb-2"></i>No costs configured yet
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.js"></script>
+</body>
+</html>
